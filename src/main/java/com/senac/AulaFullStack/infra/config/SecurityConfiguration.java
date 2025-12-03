@@ -28,31 +28,33 @@ public class SecurityConfiguration {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Cadastro público
 
-                        // --- PROTEGIDAS ---
+                        // --- PROTEGIDAS POR ROLE (BOLT) ---
 
-                        // Empresas:
-                        // - Cadastrar: Exige login para vincular o dono
-                        .requestMatchers(HttpMethod.POST, "/empresas/cadastrar").authenticated()
+                        // Rotas de Admin (CUD para entidades principais)
+                        .requestMatchers(HttpMethod.POST, "/alunos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/alunos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/alunos/**").hasRole("ADMIN")
 
-                        // - Listar: Apenas ADMIN vê todas as empresas
-                        .requestMatchers(HttpMethod.GET, "/empresas").hasRole("ADMIN")
+                        .requestMatchers("/onibus/cadastro").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/onibus/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/onibus/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/empresas/minha").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/empresas/minha").authenticated()
+                        // Rotas de Consulta (Geral)
+                        .requestMatchers(HttpMethod.GET, "/alunos").hasAnyRole("ADMIN", "COORDENADORA", "COORDENADOR_PORTA", "REFEITORIO")
+                        .requestMatchers(HttpMethod.GET, "/onibus").hasAnyRole("ADMIN", "COORDENADORA")
 
-                        // - Ações Administrativas
-                        .requestMatchers(HttpMethod.PUT, "/empresas/**").hasAnyRole("ADMIN", "GERENTE")
-                        .requestMatchers(HttpMethod.DELETE, "/empresas/**").hasRole("ADMIN")
+                        // Rotas de Operação (Módulos)
+                        .requestMatchers("/registros/**").authenticated()
+                        .requestMatchers("/coordenadora/onibus").hasRole("COORDENADORA")
 
                         // Usuários
-                        .requestMatchers(HttpMethod.GET , "/usuarios/minha-empresa").authenticated()
+                        .requestMatchers(HttpMethod.GET , "/usuarios/equipe").authenticated()
+                        .requestMatchers(HttpMethod.GET , "/usuarios/me").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/editar").authenticated()
                         .requestMatchers(HttpMethod.GET , "/usuarios").hasRole("ADMIN") // Só Admin lista todos
-
-                        // Campanhas e Canais
-                        .requestMatchers("/campanhas/**").authenticated()
-                        .requestMatchers("/canais").authenticated()
+                        .requestMatchers(HttpMethod.DELETE , "/usuarios/**").hasRole("ADMIN") // Só Admin deleta
 
                         .anyRequest().authenticated()
                 )

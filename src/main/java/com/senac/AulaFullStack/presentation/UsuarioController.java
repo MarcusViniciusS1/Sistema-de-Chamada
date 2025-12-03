@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-@Tag(name="Controlador de usuários", description = "Gestão de Usuários")
+@Tag(name="Controlador de usuários", description = "Gestão de Usuários e Equipes")
 public class UsuarioController {
 
     @Autowired private UsuarioService usuarioService;
@@ -26,27 +26,28 @@ public class UsuarioController {
         return usuario != null ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
     }
 
+    // Rota para ADMIN listar TODOS os usuários do sistema
     @GetMapping
+    @Operation(summary = "Lista todos os usuários (Apenas ADMIN)", description = "Busca todos os usuários cadastrados no banco de dados.")
     public ResponseEntity<List<UsuarioResponseDto>> consultarTodos(){
         return ResponseEntity.ok(usuarioService.consultarTodosSemFiltro());
     }
 
-    @GetMapping("/minha-empresa")
-    public ResponseEntity<List<UsuarioResponseDto>> listarPorEmpresa(@AuthenticationPrincipal UsuarioPrincipalDto user) {
-        return ResponseEntity.ok(usuarioService.listarPorEmpresa(user));
+    // Rota para Coordenadora listar sua equipe (que busca do DB)
+    @GetMapping("/equipe")
+    @Operation(summary = "Lista equipe/usuários visíveis (Busca do DB)", description = "Admin vê todos, Coordenadora vê seu ônibus, outros veem só a si.")
+    public ResponseEntity<List<UsuarioResponseDto>> listarEquipe(@AuthenticationPrincipal UsuarioPrincipalDto user) {
+        return ResponseEntity.ok(usuarioService.listarEquipe(user));
     }
 
-    // --- ALTERAÇÃO AQUI: Adicionado @AuthenticationPrincipal ---
     @PostMapping
     public ResponseEntity<?> cadastrarUsuario(@RequestBody UsuarioRequestDto usuario, @AuthenticationPrincipal UsuarioPrincipalDto userLogado){
         try{
-            // Se userLogado for null, é um cadastro público (ex: auto-cadastro), senão é logado
             return ResponseEntity.ok(usuarioService.salvarUsuario(usuario, userLogado));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    // -----------------------------------------------------------
 
     @PutMapping("/editar")
     public ResponseEntity<UsuarioResponseDto> editarUser(
@@ -58,12 +59,6 @@ public class UsuarioController {
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponseDto> buscarMe(@AuthenticationPrincipal UsuarioPrincipalDto user) {
         return ResponseEntity.ok(usuarioService.buscarUsuarioLogado(user));
-    }
-
-    @PostMapping("/vincularEmpresa")
-    public ResponseEntity<UsuarioResponseDto> vincular(@RequestParam Long empresaId, @AuthenticationPrincipal UsuarioPrincipalDto user) {
-        var logado = usuarioRepository.findById(user.id()).orElseThrow();
-        return ResponseEntity.ok(usuarioService.vincularUsuarioComEmpresa(empresaId, logado));
     }
 
     @DeleteMapping("/{id}")

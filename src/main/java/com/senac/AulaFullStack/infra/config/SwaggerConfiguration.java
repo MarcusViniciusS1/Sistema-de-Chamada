@@ -22,8 +22,8 @@ public class SwaggerConfiguration {
                                 .bearerFormat("JWT")
                 ))
                 .info(new Info()
-                        .title("MktManager - Sistema de Gestão de Marketing")
+                        .title("BOLT - Sistema de Chamada APAE") // Título alterado
                         .version("1.0.0")
-                        .description("API para gerenciamento de campanhas, empresas e equipes de marketing."));
+                        .description("API para gerenciamento de alunos, ônibus e registros de embarque da APAE."));
     }
 }

@@ -8,5 +8,5 @@ public record UsuarioRequestDto(
         String email,
         String role,
         String telefone,
-        Long empresaId
+        Long onibusId // <-- Campo CORRIGIDO
 ) {}

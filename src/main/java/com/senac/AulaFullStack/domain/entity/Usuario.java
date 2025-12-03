@@ -35,13 +35,12 @@ public class Usuario implements UserDetails {
 
     private String telefone;
     private LocalDateTime dataCadastro;
-    private String role; // admin, coordenadora, refeitorio, coordenador_porta
+    private String role; // Ex: ADMIN, COORDENADORA, REFEITORIO, COORDENADOR_PORTA
 
     private String tokenSenha;
 
-    // NOVO: Relacionamento com Ônibus (para coordenadoras)
     @ManyToOne
-    @JoinColumn(name="onibus_id", nullable = true)
+    @JoinColumn(name="onibus_id", nullable = true) // Relacionamento com Ônibus
     private Onibus onibus;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -58,6 +57,11 @@ public class Usuario implements UserDetails {
         this.dataCadastro = LocalDateTime.now();
     }
 
+    // Método auxiliar para criar DTO de resposta
+    public UsuarioResponseDto toDtoResponse() {
+        return new UsuarioResponseDto(id, nome, email, role, onibus != null ? onibus.getId() : null);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
@@ -69,8 +73,4 @@ public class Usuario implements UserDetails {
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
-
-    public UsuarioResponseDto toDtoResponse() {
-        return new UsuarioResponseDto(id, nome, email, role, onibus != null ? onibus.getId() : null);
-    }
 }

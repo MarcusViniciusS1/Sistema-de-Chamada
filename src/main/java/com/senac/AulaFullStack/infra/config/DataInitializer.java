@@ -1,44 +1,47 @@
 package com.senac.AulaFullStack.infra.config;
 
-import com.senac.AulaFullStack.domain.entity.Canal;
-import com.senac.AulaFullStack.domain.repository.CanalRepository;
+import com.senac.AulaFullStack.domain.entity.Usuario;
+import com.senac.AulaFullStack.domain.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    public CommandLineRunner loadData(CanalRepository canalRepository) {
+    @Transactional
+    public CommandLineRunner loadData(
+            UsuarioRepository usuarioRepository) {
         return args -> {
-            // Verifica se a tabela de canais está vazia
-            if (canalRepository.count() == 0) {
-                System.out.println("--- Inicializando Canais de Marketing Padrão ---");
+            // Verifica se existe algum usuário no banco. Se não, cria o ADMIN.
+            if (usuarioRepository.count() == 0) {
+                System.out.println("--- Inicializando Usuário ADMIN Padrão ---");
 
-                List<String> canais = List.of(
-                        "Google Ads",
-                        "Meta Ads (Facebook/Instagram)",
-                        "LinkedIn Ads",
-                        "Email Marketing",
-                        "SEO / Orgânico",
-                        "TikTok Ads",
-                        "YouTube Ads",
-                        "Influenciadores",
-                        "Eventos / Offline"
+                // Usuário ADMIN padrão: Email: admin@bolt.com, Senha: 123456
+                Usuario admin = new Usuario(
+                        null, // 1. id
+                        "Admin Sistema", // 2. nome
+                        "00000000000", // 3. cpf
+                        "123456", // 4. senha
+                        "admin@bolt.com", // 5. email
+                        "999999999", // 6. telefone
+                        LocalDateTime.now(), // 7. dataCadastro
+                        "ADMIN", // 8. role
+                        null, // 9. tokenSenha
+                        null, // 10. onibus
+                        new ArrayList<>() // 11. tokens
                 );
 
-                for (String nome : canais) {
-                    // Cria o objeto Canal (passando null no ID para o banco gerar)
-                    Canal canal = new Canal(null, nome);
-                    canalRepository.save(canal);
-                }
+                usuarioRepository.save(admin);
+                System.out.println("--- Usuário ADMIN criado com sucesso! ---");
 
-                System.out.println("--- " + canais.size() + " Canais inseridos com sucesso! ---");
             } else {
-                System.out.println("--- Canais já carregados no banco. Pulando inicialização. ---");
+                System.out.println("--- Usuários já existentes. Pulando inicialização. ---");
             }
         };
     }

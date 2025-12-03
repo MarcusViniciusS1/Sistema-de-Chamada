@@ -6,7 +6,7 @@ import com.senac.AulaFullStack.application.dto.login.RecuperarSenhaDto;
 import com.senac.AulaFullStack.application.dto.usuario.RegistrarNovaSenhaDto;
 import com.senac.AulaFullStack.application.services.TokenService;
 import com.senac.AulaFullStack.application.services.UsuarioService;
-import com.senac.AulaFullStack.domain.repository.UsuarioRepository; // Import necessário
+import com.senac.AulaFullStack.domain.repository.UsuarioRepository; // <-- Linha CORRIGIDA
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class AuthController {
     private UsuarioService usuarioService;
 
     @Autowired
-    private UsuarioRepository usuarioRepository; // Injeção do repositório
+    private UsuarioRepository usuarioRepository;
 
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Método responsável por efetuar o login de usuário e retornar token com informações")
@@ -35,14 +35,13 @@ public class AuthController {
         }
 
         var token = tokenService.gerarToken(request);
-        // Busca o usuário para extrair as informações adicionais
         var usuario = usuarioRepository.findByEmail(request.email()).orElseThrow();
 
-        // Retorna o DTO completo com token, role, empresaId e nome
+        // Retorna o DTO completo com token, role, onibusId e nome
         return ResponseEntity.ok(new LoginResponseDto(
                 token,
                 usuario.getRole(),
-                usuario.getEmpresa() != null ? usuario.getEmpresa().getId() : null,
+                usuario.getOnibus() != null ? usuario.getOnibus().getId() : null,
                 usuario.getNome()
         ));
     }

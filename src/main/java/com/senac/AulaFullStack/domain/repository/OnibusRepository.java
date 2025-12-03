@@ -1,4 +1,12 @@
 package com.senac.AulaFullStack.domain.repository;
 
-public class OnibusRepository {
+import com.senac.AulaFullStack.domain.entity.Onibus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface OnibusRepository extends JpaRepository<Onibus, Long> {
+    Optional<Onibus> findByIdString(String idString);
 }

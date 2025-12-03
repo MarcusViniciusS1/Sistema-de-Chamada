@@ -7,9 +7,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.senac.AulaFullStack.application.dto.login.LoginRequestDto;
 import com.senac.AulaFullStack.application.dto.usuario.UsuarioPrincipalDto;
 import com.senac.AulaFullStack.domain.entity.Token;
-import com.senac.AulaFullStack.domain.entity.Usuario;
-import com.senac.AulaFullStack.domain.repository.TokenRepository;
-import com.senac.AulaFullStack.domain.repository.UsuarioRepository;
+import com.senac.AulaFullStack.domain.repository.TokenRepository; // <-- Import CORRIGIDO
+import com.senac.AulaFullStack.domain.repository.UsuarioRepository; // <-- Import CORRIGIDO
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,8 +37,6 @@ public class TokenService {
     UsuarioRepository usuarioRepository;
 
 
-
-
     public String gerarToken(LoginRequestDto loginRequestDto){
         var usuario = usuarioRepository.findByEmail(loginRequestDto.email()).orElse(null);
 
@@ -47,7 +44,7 @@ public class TokenService {
 
         String token = JWT.create()
                 .withIssuer(emissor)
-                .withSubject(usuario.getEmail())//informação que vou carregar no token
+                .withSubject(usuario.getEmail())
                 .withExpiresAt(this.gerarDataExpiracao())
                 .sign(algorithm);
         tokenRepository.save(new Token(null, token, usuario));
@@ -67,12 +64,7 @@ public class TokenService {
         }
 
         return new UsuarioPrincipalDto(tokenResult.getUsuario());
-
-
     }
-
-
-
 
     private Instant gerarDataExpiracao(){
         var dataAtual = LocalDateTime.now();
@@ -80,7 +72,4 @@ public class TokenService {
 
         return novaData.toInstant(ZoneOffset.of("-03:00"));
     }
-
-
-
 }
