@@ -1,4 +1,4 @@
 package com.senac.AulaFullStack.domain.repository;
 
-public class TokenRepository {
+public class ParadaRepository {
 }

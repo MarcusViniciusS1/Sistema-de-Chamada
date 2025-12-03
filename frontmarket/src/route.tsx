@@ -7,14 +7,14 @@ import CadastrarUsuario from "./pages/User/cadastrarUsuario";
 import RecuperarSenha from "./pages/User/recuperarSenha"; 
 import ResetarSenha from "./pages/User/resetarSenha"; 
 
+// Telas do BOLT
 import Dashboard from "./pages/Admin/dashboard";
-import ListaCampanhas from "./pages/Admin/campanhas/lista";
-import FormCampanha from "./pages/Admin/campanhas/formulario";
-
-// Agora usamos apenas a LISTA e o FORMULÁRIO unificados
-import ListaEmpresas from "./pages/Admin/empresa/lista";
-import FormularioEmpresaAdmin from "./pages/Admin/empresa/formulario";
-
+import CadastroAluno from "./pages/Admin/aluno/formulario";
+import CadastroOnibus from "./pages/Admin/onibus/formulario";
+import ListaOnibus from "./pages/Admin/onibus/lista"; 
+import ModuloPorta from "./pages/Admin/moduloPorta";
+import ModuloRefeitorio from "./pages/Admin/refeitorio";
+import ModuloCoordenadoraOnibus from "./pages/User/controleOnibus";
 import ListaUsuarios from "./pages/Admin/usuarios/lista";
 import FormularioUsuario from "./pages/Admin/usuarios/formulario";
 
@@ -32,15 +32,17 @@ export default function AppRoutes() {
             <Route path="/home" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             
-            {/* Empresas Unificadas */}
-            <Route path="/empresas" element={<ListaEmpresas />} />
-            <Route path="/empresa/nova" element={<FormularioEmpresaAdmin />} />
-            <Route path="/empresa/:id/editar" element={<FormularioEmpresaAdmin />} />
+            {/* ADMIN */}
+            <Route path="/onibus" element={<ListaOnibus />} />
+            <Route path="/onibus/novo" element={<CadastroOnibus />} />
+            <Route path="/onibus/:id/editar" element={<CadastroOnibus />} />
 
-            {/* Campanhas */}
-            <Route path="/campanhas" element={<ListaCampanhas />} />
-            <Route path="/campanhas/nova" element={<FormCampanha />} />
-            <Route path="/campanhas/:id/editar" element={<FormCampanha />} />
+            <Route path="/alunos/cadastro" element={<CadastroAluno />} />
+            
+            {/* TELAS DE OPERAÇÃO */}
+            <Route path="/modulo-porta" element={<ModuloPorta />} />
+            <Route path="/refeitorio" element={<ModuloRefeitorio />} />
+            <Route path="/coordenadora-onibus" element={<ModuloCoordenadoraOnibus />} />
             
             {/* Equipe */}
             <Route path="/usuarios" element={<ListaUsuarios />} />

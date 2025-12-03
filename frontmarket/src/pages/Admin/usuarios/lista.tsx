@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { buscarUsuariosDaEmpresa, deletarUsuario, type Usuario } from "../../../services/usuarioService";
+import { buscarUsuariosDaEquipe, deletarUsuario, type Usuario } from "../../../services/usuarioService";
 import type { RootState } from "../../../redux/store";
 
 export default function ListaUsuarios() {
@@ -9,11 +9,11 @@ export default function ListaUsuarios() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
-  // Pega a role do usuário logado para definir permissões
   const userRole = useSelector((state: RootState) => state.auth.usuario?.role);
 
-  // Regra: Apenas Admin e Gerente podem editar/excluir/adicionar
-  const podeGerenciar = userRole === 'ADMIN' || userRole === 'GERENTE' || userRole === 'ADMINONG';
+  // Regra: Apenas Admin e Coordenadora podem gerenciar membros
+  const podeGerenciar = userRole === 'ADMIN' || userRole === 'COORDENADORA';
+  const isAdmin = userRole === 'ADMIN';
 
   useEffect(() => {
     carregarEquipe();
@@ -21,7 +21,8 @@ export default function ListaUsuarios() {
 
   async function carregarEquipe() {
     try {
-      const dados = await buscarUsuariosDaEmpresa();
+      // Usa o novo endpoint de listagem inteligente
+      const dados = await buscarUsuariosDaEquipe();
       setUsuarios(dados);
     } catch (error) {
       console.error("Erro ao carregar equipe:", error);
@@ -31,7 +32,7 @@ export default function ListaUsuarios() {
   }
 
   async function handleDelete(id: number) {
-    if (!podeGerenciar) return;
+    if (!isAdmin) return; // Só ADMIN pode deletar
     
     if (window.confirm("Tem certeza que deseja remover este usuário?")) {
       try {
@@ -48,13 +49,17 @@ export default function ListaUsuarios() {
   // Helpers visuais
   function getBadgeColor(role: string) {
       if (role === 'ADMIN') return 'bg-danger';
-      if (role === 'GERENTE' || role === 'ADMINONG') return 'bg-primary';
+      if (role === 'COORDENADORA') return 'bg-primary';
+      if (role === 'REFEITORIO') return 'bg-success';
+      if (role === 'COORDENADOR_PORTA') return 'bg-warning';
       return 'bg-secondary';
   }
 
   function getRoleName(role: string) {
-      if (role === 'ADMIN') return 'Super Admin';
-      if (role === 'GERENTE' || role === 'ADMINONG') return 'Gerente';
+      if (role === 'ADMIN') return 'Administrador';
+      if (role === 'COORDENADORA') return 'Coordenadora';
+      if (role === 'REFEITORIO') return 'Refeitório';
+      if (role === 'COORDENADOR_PORTA') return 'Portaria';
       return 'Funcionário';
   }
 
@@ -62,13 +67,13 @@ export default function ListaUsuarios() {
     <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h3 className="fw-bold text-dark mb-1">Equipe da Empresa</h3>
+          <h3 className="fw-bold text-dark mb-1">Gestão de Equipe BOLT</h3>
           <p className="text-muted mb-0">Membros com acesso à plataforma.</p>
         </div>
         
-        {/* Botão Adicionar: Só aparece para Admin e Gerente */}
+        {/* Botão Adicionar: Só aparece para Admin e Coordenadora */}
         {podeGerenciar && (
-          <Link to="/usuarios/novo" className="btn btn-success shadow-sm d-flex align-items-center px-4 py-2">
+          <Link to="/usuarios/novo" className="btn btn-primary shadow-sm d-flex align-items-center px-4 py-2">
             <i className="bi bi-person-plus-fill me-2"></i> Adicionar Membro
           </Link>
         )}
@@ -83,8 +88,7 @@ export default function ListaUsuarios() {
                   <th className="ps-4 py-3">Nome</th>
                   <th>E-mail</th>
                   <th>Perfil</th>
-                  <th>Status</th>
-                  {/* Coluna Ações: Só aparece para Admin e Gerente */}
+                  <th>Ônibus ID</th>
                   {podeGerenciar && <th className="text-end pe-4">Ações</th>}
                 </tr>
               </thead>
@@ -101,18 +105,19 @@ export default function ListaUsuarios() {
                           {getRoleName(u.role)}
                         </span>
                       </td>
-                      <td><span className="badge bg-success-subtle text-success rounded-pill">Ativo</span></td>
+                      <td>{u.onibusId || 'N/A'}</td>
                       
-                      {/* Botões de Ação */}
                       {podeGerenciar && (
                         <td className="text-end pe-4">
                           <div className="d-flex justify-content-end gap-2">
                             <button onClick={() => navigate(`/usuarios/${u.id}/editar`)} className="btn btn-sm btn-outline-secondary px-3">
                               Editar
                             </button>
-                            <button onClick={() => handleDelete(u.id)} className="btn btn-sm btn-outline-danger px-3">
-                              Excluir
-                            </button>
+                            {isAdmin && (
+                                <button onClick={() => handleDelete(u.id)} className="btn btn-sm btn-outline-danger px-3">
+                                    Excluir
+                                </button>
+                            )}
                           </div>
                         </td>
                       )}

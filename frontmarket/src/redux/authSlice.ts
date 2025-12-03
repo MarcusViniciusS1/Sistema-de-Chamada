@@ -4,7 +4,7 @@ interface Usuario{
     email: string,
     nome: string,
     role?: string,
-    empresaId?: number // <-- ADICIONADO AQUI
+    onibusId?: number // <-- Corrigido
 }
 
 interface AuthState{

@@ -8,7 +8,7 @@ export interface LoginRequest {
 export interface LoginResponse {
     token: string;
     role?: string;
-    empresaId?: number;
+    onibusId?: number; // Corrigido
     nome?: string;
 }
 
