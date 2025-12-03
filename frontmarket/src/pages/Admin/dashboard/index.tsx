@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Bus, Users, AlertTriangle, CheckCircle, ChefHat, Shield } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
+import { Bus, Users, AlertTriangle, CheckCircle, Shield } from 'lucide-react';
 import { buscarAlunos } from '../../../services/alunoService';
 import { buscarOnibus } from '../../../services/onibusService';
-import { Aluno, Onibus } from '../../../types/bolt';
+import type { Aluno, Onibus } from '../../../types/bolt';
 
 export default function Dashboard() {
   const [alunos, setAlunos] = useState<Aluno[]>([]);
@@ -63,17 +63,11 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4">
-      {/* Cabeçalho */}
       <div className="bg-white border-2 border-gray-300 rounded p-4 shadow-sm">
-        <h2 className="text-xl font-bold text-gray-800 mb-1">
-          Dashboard - Sistema de Chamada BOLT
-        </h2>
-        <p className="text-gray-600 text-sm">
-          Acompanhamento em tempo real do transporte e refeitório
-        </p>
+        <h2 className="text-xl font-bold text-gray-800 mb-1">Dashboard - Sistema de Chamada BOLT</h2>
+        <p className="text-gray-600 text-sm">Acompanhamento em tempo real</p>
       </div>
 
-      {/* Cards de Estatísticas */}
       <div className="row g-4 mb-4">
         <KpiCard title="Total de Alunos" value={totalAlunos} Icon={Users} color="#3b82f6" bgColor="#eff6ff" />
         <KpiCard title="Embarcaram" value={alunosEmbarcados} Icon={CheckCircle} color="#10b981" bgColor="#ecfdf5" />
@@ -82,14 +76,12 @@ export default function Dashboard() {
       </div>
       
       <div className="row g-4">
-        
-        {/* Coluna 1: Status dos Ônibus */}
         <div className="col-md-6">
             <div className="card border-0 shadow-sm p-4 h-100">
                 <h3 className="text-lg fw-bold text-gray-800 mb-3">Status dos Ônibus ({onibus.length})</h3>
                 <div className="space-y-3 overflow-y-auto" style={{ maxHeight: '400px' }}>
                     {onibus.length === 0 ? (
-                        <p className="text-center text-muted py-3">Nenhum ônibus cadastrado no sistema.</p>
+                        <p className="text-center text-muted py-3">Nenhum ônibus cadastrado.</p>
                     ) : (
                         onibus.map((bus) => {
                             const progresso = (bus.paradaAtual / bus.quantidadeParadas) * 100;
@@ -103,14 +95,12 @@ export default function Dashboard() {
                                         <p className="text-xs text-muted">Motorista: {bus.motorista}</p>
                                     </div>
                                     <p className="text-sm text-gray-800 mb-1">
-                                        Alunos: {alunosPresentes} / {alunosTotais} (Capacidade: {bus.capacidadeMaxima})
+                                        Alunos: {alunosPresentes} / {alunosTotais} (Cap: {bus.capacidadeMaxima})
                                     </p>
                                     <div className="w-100 bg-gray-300 rounded h-2">
                                       <div className="bg-primary h-2 rounded" style={{ width: `${progresso}%` }}></div>
                                     </div>
-                                    <p className="text-xs text-muted mt-1">
-                                      Próxima Parada: Parada {bus.paradaAtual} / {bus.quantidadeParadas}
-                                    </p>
+                                    <p className="text-xs text-muted mt-1">Próxima Parada: {bus.paradaAtual}</p>
                                 </div>
                             );
                         })
@@ -119,7 +109,6 @@ export default function Dashboard() {
             </div>
         </div>
 
-        {/* Coluna 2: Alunos em Destaque */}
         <div className="col-md-6">
             <div className="card border-0 shadow-sm p-4 mb-4">
                 <h3 className="text-lg fw-bold text-danger mb-3 d-flex align-items-center">
@@ -128,15 +117,14 @@ export default function Dashboard() {
                 </h3>
                 <div className="space-y-2 overflow-y-auto" style={{ maxHeight: '200px' }}>
                     {alunosComRestricao.length === 0 ? (
-                        <p className="text-center text-muted py-3">Nenhum aluno presente com restrições.</p>
+                        <p className="text-center text-muted py-3">Nenhum aluno com restrições.</p>
                     ) : (
                         alunosComRestricao.map(aluno => (
                             <div key={aluno.id} className="p-2 bg-orange-50 border-2 border-orange-300 rounded">
                                 <p className="fw-bold text-sm text-gray-800">{aluno.nomeCompleto}</p>
                                 <div className="d-flex flex-wrap gap-2 mt-1">
                                     {aluno.alergia && <span className="badge bg-danger-subtle text-danger">Alergia: {aluno.alergia}</span>}
-                                    {aluno.deficiencia && <span className="badge bg-primary-subtle text-primary">Deficiência: {aluno.deficiencia}</span>}
-                                    {aluno.tipoAlimentar !== 'sem_restricao' && <span className="badge bg-warning-subtle text-warning">Dieta: {aluno.tipoAlimentar}</span>}
+                                    {aluno.deficiencia && <span className="badge bg-primary-subtle text-primary">Def: {aluno.deficiencia}</span>}
                                 </div>
                             </div>
                         ))
@@ -151,7 +139,7 @@ export default function Dashboard() {
                 </h3>
                 <div className="space-y-2 overflow-y-auto" style={{ maxHeight: '200px' }}>
                     {alunosAguardando === 0 ? (
-                        <p className="text-center text-muted py-3">Todos os alunos esperados embarcaram.</p>
+                        <p className="text-center text-muted py-3">Todos embarcaram.</p>
                     ) : (
                         alunosAguardandoComponent
                     )}

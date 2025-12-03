@@ -1,5 +1,5 @@
 import api from "./api";
-import { Onibus, OnibusRequest, Parada, ParadaDetalheRequest } from "../types/bolt";
+import type { Onibus, OnibusRequest, Parada, ParadaDetalheRequest } from "../types/bolt";
 
 export async function buscarOnibus(): Promise<Onibus[]> {
   const response = await api.get<Onibus[]>("/onibus");
@@ -40,7 +40,6 @@ export async function deletarOnibus(id: number): Promise<void> {
 }
 
 export async function buscarParadas(): Promise<Parada[]> {
-  // Rota auxiliar para cadastro de alunos
   const response = await api.get<Parada[]>("/paradas"); 
   return response.data;
 }

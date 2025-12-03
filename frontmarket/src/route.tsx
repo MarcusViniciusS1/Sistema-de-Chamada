@@ -10,7 +10,7 @@ import ResetarSenha from "./pages/User/resetarSenha";
 // Telas do BOLT
 import Dashboard from "./pages/Admin/dashboard";
 import CadastroAluno from "./pages/Admin/aluno/formulario";
-import CadastroOnibus from "./pages/Admin/onibus/formulario";
+import CadastroOnibus from "./pages/Admin/onibus/formulario"; // O arquivo criado acima
 import ListaOnibus from "./pages/Admin/onibus/lista"; 
 import ModuloPorta from "./pages/Admin/moduloPorta";
 import ModuloRefeitorio from "./pages/Admin/refeitorio";
@@ -32,19 +32,16 @@ export default function AppRoutes() {
             <Route path="/home" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             
-            {/* ADMIN */}
             <Route path="/onibus" element={<ListaOnibus />} />
             <Route path="/onibus/novo" element={<CadastroOnibus />} />
             <Route path="/onibus/:id/editar" element={<CadastroOnibus />} />
 
             <Route path="/alunos/cadastro" element={<CadastroAluno />} />
             
-            {/* TELAS DE OPERAÇÃO */}
             <Route path="/modulo-porta" element={<ModuloPorta />} />
             <Route path="/refeitorio" element={<ModuloRefeitorio />} />
             <Route path="/coordenadora-onibus" element={<ModuloCoordenadoraOnibus />} />
             
-            {/* Equipe */}
             <Route path="/usuarios" element={<ListaUsuarios />} />
             <Route path="/usuarios/novo" element={<FormularioUsuario />} />
             <Route path="/usuarios/:id/editar" element={<FormularioUsuario />} />

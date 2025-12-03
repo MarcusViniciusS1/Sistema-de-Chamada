@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { cadastrarUsuario, type UsuarioRequest } from "../../../services/usuarioService";
-import { buscarTodasEmpresas } from "../../../services/empresaService";
+import { buscarOnibus } from "../../../services/onibusService";
+import type { Onibus } from "../../../types/bolt"; // <-- CORREÇÃO: import type
 
 export default function CadastrarUsuario() {
   const navigate = useNavigate();
-  const [empresas, setEmpresas] = useState<{id: number, nomeFantasia: string}[]>([]);
+  const [onibusList, setOnibusList] = useState<Onibus[]>([]);
 
   const [formData, setFormData] = useState<UsuarioRequest>({
     nome: "",
@@ -14,14 +15,13 @@ export default function CadastrarUsuario() {
     senha: "",
     telefone: "",
     role: "USER",
-    empresaId: undefined
+    onibusId: undefined
   });
 
   useEffect(() => {
-    // Carrega empresas públicas (devido ao permitAll no backend)
-    buscarTodasEmpresas()
-      .then(setEmpresas)
-      .catch(err => console.log("Não foi possível carregar empresas públicas:", err));
+    buscarOnibus()
+      .then(setOnibusList)
+      .catch(err => console.log("Não foi possível carregar ônibus públicos:", err));
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -32,14 +32,17 @@ export default function CadastrarUsuario() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      // Converte empresaId para numero se selecionado
-      const payload = { ...formData, empresaId: formData.empresaId ? Number(formData.empresaId) : undefined };
+      const payload = { 
+          ...formData, 
+          onibusId: formData.onibusId ? Number(formData.onibusId) : undefined 
+      };
+      
       await cadastrarUsuario(payload);
       alert("Cadastro realizado! Faça login.");
       navigate("/");
     } catch (error: any) {
       console.error(error);
-      const msg = error.response?.data || "Erro ao cadastrar.";
+      const msg = error.response?.data || "Erro ao cadastrar. Verifique o CPF/E-mail.";
       alert(msg);
     }
   };
@@ -47,7 +50,7 @@ export default function CadastrarUsuario() {
   return (
     <>
       <div className="text-center mb-4">
-        <h3 className="fw-bold text-dark">Criar conta</h3>
+        <h3 className="fw-bold text-dark">Criar conta BOLT</h3>
         <p className="text-secondary">Preencha os dados para continuar</p>
       </div>
 
@@ -77,13 +80,12 @@ export default function CadastrarUsuario() {
           <input type="text" name="telefone" value={formData.telefone} onChange={handleChange} className="form-control bg-light border-0 p-3" placeholder="(00) 00000-0000" required style={{borderRadius: "10px"}}/>
         </div>
 
-        {/* SELECT DE EMPRESAS */}
         <div className="mb-4">
-          <label className="form-label text-secondary small fw-bold">EMPRESA</label>
-          <select name="empresaId" className="form-select bg-light border-0 p-3" value={formData.empresaId || ""} onChange={handleChange} required style={{borderRadius: "10px"}}>
-            <option value="">Selecione sua empresa...</option>
-            {empresas.map(e => (
-              <option key={e.id} value={e.id}>{e.nomeFantasia}</option>
+          <label className="form-label text-secondary small fw-bold">ÔNIBUS (OPCIONAL)</label>
+          <select name="onibusId" className="form-select bg-light border-0 p-3" value={formData.onibusId || ""} onChange={handleChange} style={{borderRadius: "10px"}}>
+            <option value="">Selecione seu ônibus (se aplicável)...</option>
+            {onibusList.map(o => (
+              <option key={o.id} value={o.id}>{o.nome} - {o.placa}</option>
             ))}
           </select>
         </div>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { buscarOnibus, deletarOnibus } from "../../../services/onibusService";
-import { Onibus } from "../../../types/bolt";
+import type { Onibus } from "../../../types/bolt"; // <-- CORREÇÃO
 import { Bus, Trash2, Edit } from "lucide-react";
 
 export default function ListaOnibus() {
+  // ... (restante do código igual)
   const [onibus, setOnibus] = useState<Onibus[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

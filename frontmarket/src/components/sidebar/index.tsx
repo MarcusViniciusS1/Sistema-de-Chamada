@@ -1,10 +1,9 @@
-// frontmarket/src/components/sidebar/index.tsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/authSlice";
 import { useState } from "react";
 import type { RootState } from "../../redux/store";
-import { Bus, Users, Shield, ChefHat, Heart } from "lucide-react"; // <-- ESTE IMPORT FUNCIONARÁ APÓS npm install
+import { Bus, Users, Shield, ChefHat, Heart } from "lucide-react";
 
 export default function Sidebar() {
   const location = useLocation();

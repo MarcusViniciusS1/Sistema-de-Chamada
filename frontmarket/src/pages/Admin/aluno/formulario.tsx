@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { UserPlus, Save, X } from 'lucide-react';
-import { AlunoRequest } from '../../../types/bolt';
-import { cadastrarAluno, buscarAlunos } from '../../../services/alunoService';
+import type { AlunoRequest, Parada } from '../../../types/bolt'; // <-- CORREÇÃO: import type
+import { cadastrarAluno } from '../../../services/alunoService';
 import { buscarParadas } from '../../../services/onibusService';
-import { Parada } from '../../../types/bolt';
-import { useNavigate } from 'react-router-dom';
 
 export default function CadastroAluno() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Removido pois não estava sendo usado na versão anterior
   const [paradas, setParadas] = useState<Parada[]>([]);
   const [loading, setLoading] = useState(false);
   const [mostrarSucesso, setMostrarSucesso] = useState(false);
@@ -50,7 +48,7 @@ export default function CadastroAluno() {
       
     } catch (error: any) {
         console.error(error);
-        const msg = error.response?.data || "Erro ao cadastrar aluno. Verifique o ID e o CPF.";
+        const msg = error.response?.data || "Erro ao cadastrar aluno.";
         alert(typeof msg === "string" ? msg : JSON.stringify(msg));
         setLoading(false);
     }
@@ -92,85 +90,37 @@ export default function CadastroAluno() {
           <div className="row g-3">
             <div className="col-md-6">
               <label className="form-label fw-bold text-dark small">ID do Aluno *</label>
-              <input
-                type="text"
-                name="idString"
-                value={aluno.idString}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Ex: joao_001"
-                required
-              />
+              <input type="text" name="idString" value={aluno.idString} onChange={handleChange} className="form-control" placeholder="Ex: joao_001" required />
             </div>
-
             <div className="col-md-6">
               <label className="form-label fw-bold text-dark small">Nome Completo *</label>
-              <input
-                type="text"
-                name="nomeCompleto"
-                value={aluno.nomeCompleto}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Digite o nome completo do aluno"
-                required
-              />
+              <input type="text" name="nomeCompleto" value={aluno.nomeCompleto} onChange={handleChange} className="form-control" placeholder="Digite o nome completo" required />
             </div>
-
             <div className="col-md-6">
               <label className="form-label fw-bold text-dark small">Sexo *</label>
-              <select
-                name="sexo"
-                value={aluno.sexo}
-                onChange={handleChange}
-                className="form-select"
-                required
-              >
+              <select name="sexo" value={aluno.sexo} onChange={handleChange} className="form-select" required>
                 <option value="masculino">Masculino</option>
                 <option value="feminino">Feminino</option>
               </select>
             </div>
-
             <div className="col-md-6">
               <label className="form-label fw-bold text-dark small">Idade *</label>
-              <input
-                type="number"
-                name="idade"
-                min="3"
-                max="30"
-                value={aluno.idade}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
+              <input type="number" name="idade" min="3" max="30" value={aluno.idade} onChange={handleChange} className="form-control" required />
             </div>
-
             <div className="col-md-6">
               <label className="form-label fw-bold text-dark small">Parada de Embarque *</label>
-              <select
-                name="paradaId"
-                value={aluno.paradaId}
-                onChange={handleChange}
-                className="form-select"
-                required
-              >
+              <select name="paradaId" value={aluno.paradaId} onChange={handleChange} className="form-select" required>
                 <option value="0">Selecione uma parada</option>
-                {paradas.map(parada => (
-                  <option key={parada.id} value={parada.id}>
-                    {parada.nome} ({parada.onibusId ? `Ônibus ID: ${parada.onibusId}` : 'N/A'})
+                {paradas.map(p => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome} ({p.onibusId ? `Onibus ID: ${p.onibusId}` : 'N/A'})
                   </option>
                 ))}
               </select>
             </div>
-
             <div className="col-md-6">
               <label className="form-label fw-bold text-dark small">Tipo Alimentar *</label>
-              <select
-                name="tipoAlimentar"
-                value={aluno.tipoAlimentar}
-                onChange={handleChange}
-                className="form-select"
-                required
-              >
+              <select name="tipoAlimentar" value={aluno.tipoAlimentar} onChange={handleChange} className="form-select" required>
                 <option value="sem_restricao">Sem restrição</option>
                 <option value="vegetariano">Vegetariano</option>
                 <option value="diabetico">Diabético</option>
@@ -178,66 +128,29 @@ export default function CadastroAluno() {
                 <option value="outro">Outro</option>
               </select>
             </div>
-
             <div className="col-12">
               <label className="form-label fw-bold text-dark small">Endereço Residencial *</label>
-              <input
-                type="text"
-                name="enderecoResidencial"
-                value={aluno.enderecoResidencial}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Rua, número, bairro, cidade"
-                required
-              />
+              <input type="text" name="enderecoResidencial" value={aluno.enderecoResidencial} onChange={handleChange} className="form-control" required />
             </div>
-
             <div className="col-md-6">
-              <label className="form-label fw-bold text-dark small">Alergias (opcional)</label>
-              <input
-                type="text"
-                name="alergia"
-                value={aluno.alergia}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Ex: Lactose, Glúten, Amendoim"
-              />
+              <label className="form-label fw-bold text-dark small">Alergias</label>
+              <input type="text" name="alergia" value={aluno.alergia} onChange={handleChange} className="form-control" />
             </div>
-
             <div className="col-md-6">
-              <label className="form-label fw-bold text-dark small">Deficiência (opcional)</label>
-              <input
-                type="text"
-                name="deficiencia"
-                value={aluno.deficiencia}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Descreva se possui alguma deficiência"
-              />
+              <label className="form-label fw-bold text-dark small">Deficiência</label>
+              <input type="text" name="deficiencia" value={aluno.deficiencia} onChange={handleChange} className="form-control" />
             </div>
           </div>
-
           <div className="d-flex gap-3 pt-4 border-top">
-            <button
-              type="button"
-              onClick={limparFormulario}
-              className="btn btn-light border"
-            >
-              <X className="w-4 h-4 me-1" size={16} />
-              Limpar
+            <button type="button" onClick={limparFormulario} className="btn btn-light border">
+              <X className="w-4 h-4 me-1" size={16} /> Limpar
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary flex-grow-1"
-              disabled={loading}
-            >
-              <Save className="w-4 h-4 me-1" size={16} />
-              {loading ? "Cadastrando..." : "Cadastrar Aluno"}
+            <button type="submit" className="btn btn-primary flex-grow-1" disabled={loading}>
+              <Save className="w-4 h-4 me-1" size={16} /> {loading ? "Cadastrando..." : "Cadastrar Aluno"}
             </button>
           </div>
         </form>
 
-        {/* Sucesso Modal */}
         {mostrarSucesso && (
           <div className="modal d-block" tabIndex={-1}>
             <div className="modal-dialog modal-sm">

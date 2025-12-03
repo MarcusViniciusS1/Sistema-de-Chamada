@@ -1,5 +1,5 @@
 import api from "./api";
-import { Aluno, AlunoRequest, RegistroRequest, RegistroEmbarque } from "../types/bolt";
+import type { Aluno, AlunoRequest, RegistroRequest, RegistroEmbarque } from "../types/bolt";
 
 export async function buscarAlunos(): Promise<Aluno[]> {
   const response = await api.get<Aluno[]>("/alunos");
